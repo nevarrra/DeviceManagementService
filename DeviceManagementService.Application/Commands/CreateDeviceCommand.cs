@@ -6,6 +6,6 @@ namespace DeviceManagementService.Application.Commands
     public record CreateDeviceCommand(
         string Name,
         string Brand,
-        DeviceState? State = null
+        DeviceState? State
     ) : IRequest<int>;
 }

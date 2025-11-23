@@ -19,14 +19,14 @@ namespace DeviceManagementService.Application.Queries
                 cancellationToken
             );
 
-            return devices.Select(d => new DeviceDTO
-            {
-                Id = d.Id,
-                Name = d.Name,
-                Brand = d.Brand,
-                State = d.State,
-                CreatedAt = d.CreatedAt
-            }).ToList();
+            return [.. devices.Select(d => new DeviceDTO
+            (
+                d.Id,
+                d.Name,
+                d.Brand,
+                d.State,
+                d.CreatedAt
+            ))];
         }
     }
 }

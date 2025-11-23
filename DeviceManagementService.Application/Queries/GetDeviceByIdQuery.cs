@@ -3,5 +3,5 @@ using MediatR;
 
 namespace DeviceManagementService.Application.Queries
 {
-    public record GetDeviceByIdQuery(int Id) : IRequest<DeviceDTO>;
+    public record GetDeviceByIdQuery(int Id) : IRequest<DeviceDTO?>;
 }

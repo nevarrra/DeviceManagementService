@@ -14,9 +14,19 @@ namespace DeviceManagementService.Domain.Models
 
         public DateTime CreatedAt { get; private set; }
 
+        // Constructor for EF Core
         private Device() { }
 
-        public Device(int id, string name, string brand, DeviceState defaultState)
+        public Device(string name, string brand, DeviceState defaultState = DeviceState.Available)
+        {
+            Name = name;
+            Brand = brand;
+            State = defaultState;
+            CreatedAt = DateTime.UtcNow;
+        }
+
+        // Constructor for seeding data with specific Ids
+        public Device(int id, string name, string brand, DeviceState defaultState = DeviceState.Available)
         {
             Id = id;
             Name = name;

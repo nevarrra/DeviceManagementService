@@ -1,6 +1,12 @@
+using DeviceManagementService.Application.Behaviors;
 using DeviceManagementService.Application.Commands;
 using DeviceManagementService.Application.Options;
+using DeviceManagementService.Infrastructure.Abstractions;
+using DeviceManagementService.Infrastructure.Data;
+using DeviceManagementService.Infrastructure.Data.Repositories;
+using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeviceManagementService.Api
 {
@@ -13,16 +19,31 @@ namespace DeviceManagementService.Api
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
             builder.Services.AddOpenApi();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DevicesDb")));
+
+            builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateDeviceCommand>());
 
             builder.Services.Configure<DeviceValidationOptions>(builder.Configuration.GetSection("Device"));
 
+            builder.Services.AddValidatorsFromAssemblyContaining<CreateDeviceCommand>();
+
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Seed DB
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.Migrate();
+            }
+
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
@@ -31,7 +52,6 @@ namespace DeviceManagementService.Api
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

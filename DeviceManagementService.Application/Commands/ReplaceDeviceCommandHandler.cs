@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace DeviceManagementService.Application.Commands
 {
-    public class ReplaceDeviceCommandHandler(IDeviceRepository deviceRepository) : IRequestHandler<UpdateDeviceCommand, Unit>
+    public class ReplaceDeviceCommandHandler(IDeviceRepository deviceRepository) : IRequestHandler<ReplaceDeviceCommand, Unit>
     {
         private readonly IDeviceRepository _deviceRepository = deviceRepository;
-        public async Task<Unit> Handle(UpdateDeviceCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ReplaceDeviceCommand request, CancellationToken cancellationToken)
         {
             var device = await _deviceRepository.GetByIdAsync(request.Id, cancellationToken);
 

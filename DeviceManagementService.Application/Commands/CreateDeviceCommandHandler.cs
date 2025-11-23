@@ -1,4 +1,6 @@
-﻿using DeviceManagementService.Domain.Models;
+﻿using DeviceManagementService.Domain.Enums;
+using DeviceManagementService.Domain.Models;
+using DeviceManagementService.Infrastructure.Abstractions;
 using MediatR;
 
 namespace DeviceManagementService.Application.Commands
@@ -9,12 +11,12 @@ namespace DeviceManagementService.Application.Commands
 
         public async Task<int> Handle(CreateDeviceCommand request, CancellationToken cancellationToken)
         {
-            var device = new Device(
-                request.Name,
-                request.Brand,
-                request.State ?? Domain.Enums.DeviceState.Available
-            );
-            await _deviceRepository.AddAsync(device);
+            var device = request.State.HasValue
+                ? new Device(request.Name, request.Brand, request.State.Value)
+                : new Device(request.Name, request.Brand);
+
+            await _deviceRepository.AddAsync(device, cancellationToken);
+
             return device.Id;
         }
     }

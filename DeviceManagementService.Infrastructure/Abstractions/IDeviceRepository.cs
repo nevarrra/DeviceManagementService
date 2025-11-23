@@ -4,7 +4,7 @@ namespace DeviceManagementService.Infrastructure.Abstractions
 {
     public interface IDeviceRepository
     {
-        Task AddAsync(Device device);
+        Task AddAsync(Device device, CancellationToken cancellationToken);
 
         Task<Device?> GetByIdAsync(int id, CancellationToken cancellationToken);
 
