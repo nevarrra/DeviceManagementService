@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceManagementService.Api", "DeviceManagementService.Api\DeviceManagementService.Api.csproj", "{4B338A5C-E73E-45CB-B3EA-A20369F947B1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceManagementService.Application", "DeviceManagementService.Application\DeviceManagementService.Application.csproj", "{378512A8-9FC9-402F-B7E5-7C04C72DB618}"
 EndProject

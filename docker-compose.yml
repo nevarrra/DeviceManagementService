@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./src/DeviceManagementService.Api/Dockerfile
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=DevicesDb;User=sa;Password=sa;TrustServerCertificate=True;
+    ports:
+      - "8080:8080"
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: devices_sql
+    user: root
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "SaStr0ng!Pass"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+volumes:
+  sql_data:

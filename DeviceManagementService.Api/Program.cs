@@ -1,3 +1,6 @@
+using DeviceManagementService.Application.Commands;
+using DeviceManagementService.Application.Options;
+using MediatR;
 
 namespace DeviceManagementService.Api
 {
@@ -12,6 +15,10 @@ namespace DeviceManagementService.Api
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateDeviceCommand>());
+
+            builder.Services.Configure<DeviceValidationOptions>(builder.Configuration.GetSection("Device"));
 
             var app = builder.Build();
 
