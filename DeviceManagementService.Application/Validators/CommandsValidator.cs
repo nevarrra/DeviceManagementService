@@ -1,8 +1,8 @@
-﻿using FluentValidation;
-using DeviceManagementService.Application.Commands;
+﻿using DeviceManagementService.Application.Commands;
 using DeviceManagementService.Application.Options;
-using Microsoft.Extensions.Options;
 using DeviceManagementService.Infrastructure.Abstractions;
+using FluentValidation;
+using Microsoft.Extensions.Options;
 
 namespace DeviceManagementService.Application.Validators
 {
@@ -91,7 +91,7 @@ namespace DeviceManagementService.Application.Validators
         public DeleteDeviceCommandValidator(IDeviceRepository repository)
         {
             _repository = repository;
-               
+
             RuleFor(x => x.Id)
                 .GreaterThan(0).WithMessage("Device ID must be greater than 0.");
         }
