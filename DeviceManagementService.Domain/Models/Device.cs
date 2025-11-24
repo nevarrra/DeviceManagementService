@@ -37,15 +37,29 @@ namespace DeviceManagementService.Domain.Models
 
         public void UpdateDevice(string? name, string? brand, DeviceState? state)
         {
-            if (!string.IsNullOrWhiteSpace(name))
-                Name = name;
-            if (!string.IsNullOrWhiteSpace(brand))
-                Brand = brand;
-            if (state != null)
+            if (IsInUse() && !string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(brand))
+            {
+                throw new InvalidOperationException("Cannot modify, delete or replace a device that is currently in use.");
+            }
+                
+            else if (state != null)
+            {
                 State = (DeviceState)state;
+            }
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                Name = name;
+            }
+
+            if (!string.IsNullOrWhiteSpace(brand))
+            {
+                Brand = brand;
+            }
+
         }
 
-        public bool CanBeModified()
+        private bool IsInUse()
         {
             return State != DeviceState.InUse;
         }

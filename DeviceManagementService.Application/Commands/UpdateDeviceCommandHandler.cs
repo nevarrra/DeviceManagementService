@@ -1,4 +1,5 @@
-﻿using DeviceManagementService.Infrastructure.Abstractions;
+﻿using DeviceManagementService.Domain.Exceptions;
+using DeviceManagementService.Infrastructure.Abstractions;
 using MediatR;
 
 namespace DeviceManagementService.Application.Commands
@@ -9,17 +10,8 @@ namespace DeviceManagementService.Application.Commands
 
         public async Task<Unit> Handle(UpdateDeviceCommand request, CancellationToken cancellationToken)
         {
-            var device = await _deviceRepository.GetByIdAsync(request.Id, cancellationToken);
-            
-            if (device == null)
-            {
-                throw new KeyNotFoundException($"Device with Id {request.Id} not found.");
-            }
-            
-            if (!device.CanBeModified())
-            {
-                throw new InvalidOperationException($"Device with Id {request.Id} cannot be updated while in-use.");
-            }
+            var device = await _deviceRepository.GetByIdAsync(request.Id, cancellationToken)
+                ?? throw new NotFoundException("Device", request.Id);
 
             device.UpdateDevice(request.Name, request.Brand, request.State);
 

@@ -1,10 +1,6 @@
-﻿using DeviceManagementService.Infrastructure.Abstractions;
+﻿using DeviceManagementService.Domain.Exceptions;
+using DeviceManagementService.Infrastructure.Abstractions;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeviceManagementService.Application.Commands
 {
@@ -14,17 +10,8 @@ namespace DeviceManagementService.Application.Commands
 
         public async Task<Unit> Handle(DeleteDeviceCommand request, CancellationToken cancellationToken)
         {
-            var device = await _deviceRepository.GetByIdAsync(request.Id, cancellationToken);
-
-            if (device == null)
-            {
-                throw new KeyNotFoundException($"Device with Id {request.Id} not found.");
-            }
-
-            if (!device.CanBeModified())
-            {
-                throw new InvalidOperationException($"In-use device with Id {request.Id} cannot be deleted.");
-            }
+            var device = await _deviceRepository.GetByIdAsync(request.Id, cancellationToken)
+                ?? throw new NotFoundException("Device", request.Id);
 
             await _deviceRepository.DeleteAsync(device, cancellationToken);
 

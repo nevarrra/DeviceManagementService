@@ -6,10 +6,6 @@ using DeviceManagementService.Infrastructure.Abstractions;
 
 namespace DeviceManagementService.Application.Validators
 {
-    // TODO: Further improvements:
-    // Create a parent class for commands and validators
-    // Inherit common validator class to apply repetitive rules for name, brand, state etc.
-    // This will reduce redundancy and improve maintainability.
     public class CreateDeviceCommandValidator : AbstractValidator<CreateDeviceCommand>
     {
         public CreateDeviceCommandValidator(IOptions<DeviceValidationOptions> options)

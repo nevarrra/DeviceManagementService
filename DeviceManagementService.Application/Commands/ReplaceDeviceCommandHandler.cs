@@ -1,29 +1,17 @@
-﻿using DeviceManagementService.Infrastructure.Abstractions;
+﻿using DeviceManagementService.Domain.Exceptions;
+using DeviceManagementService.Infrastructure.Abstractions;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeviceManagementService.Application.Commands
 {
     public class ReplaceDeviceCommandHandler(IDeviceRepository deviceRepository) : IRequestHandler<ReplaceDeviceCommand, Unit>
     {
         private readonly IDeviceRepository _deviceRepository = deviceRepository;
+
         public async Task<Unit> Handle(ReplaceDeviceCommand request, CancellationToken cancellationToken)
         {
-            var device = await _deviceRepository.GetByIdAsync(request.Id, cancellationToken);
-
-            if (device == null)
-            {
-                throw new KeyNotFoundException($"Device with Id {request.Id} not found.");
-            }
-
-            if (!device.CanBeModified())
-            {
-                throw new InvalidOperationException($"Device with Id {request.Id} cannot be replaced while in-use.");
-            }
+            var device = await _deviceRepository.GetByIdAsync(request.Id, cancellationToken)
+                ?? throw new NotFoundException("Device", request.Id);
 
             device.UpdateDevice(request.Name, request.Brand, request.State);
 

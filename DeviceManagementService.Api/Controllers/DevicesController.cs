@@ -2,6 +2,8 @@ using DeviceManagementService.Application.Commands;
 using DeviceManagementService.Application.DTOs;
 using DeviceManagementService.Application.Queries;
 using DeviceManagementService.Domain.Enums;
+using DeviceManagementService.Domain.Exceptions;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,27 +13,31 @@ namespace DeviceManagementService.Api.Controllers
     [Route("api/devices")]
     public class DevicesController(IMediator mediator) : ControllerBase
     {
-        private IMediator _mediator = mediator;
+        private readonly IMediator _mediator = mediator;
 
         /// <summary>
         /// Get device by ID
         /// </summary>
-        /// <param name="id"></param>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(DeviceDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDeviceById([FromRoute] int id, CancellationToken cancellationToken)
         {
-            var query = new GetDeviceByIdQuery(id);
-
-            var result = await _mediator.Send(query, cancellationToken);
-
-            if (result is null)
+            try
             {
-                return NotFound();
+                var query = new GetDeviceByIdQuery(id);
+                var result = await _mediator.Send(query, cancellationToken);
+                return Ok(result);
             }
-
-            return Ok(result);
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "Device Not Found",
+                    Detail = ex.Message
+                });
+            }
         }
 
         /// <summary>
@@ -60,8 +66,20 @@ namespace DeviceManagementService.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateDevice([FromBody] CreateDeviceCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command, cancellationToken);
-            return CreatedAtAction(nameof(GetDeviceById), new { id = result }, result);
+            try
+            {
+                var result = await _mediator.Send(command, cancellationToken);
+                return CreatedAtAction(nameof(GetDeviceById), new { id = result }, result);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Validation Error",
+                    Detail = string.Join("; ", ex.Errors.Select(e => e.ErrorMessage))
+                });
+            }
         }
 
         /// <summary>
@@ -73,8 +91,29 @@ namespace DeviceManagementService.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ReplaceDevice([FromBody] ReplaceDeviceCommand command, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command, cancellationToken);
-            return NoContent();
+            try
+            {
+                await _mediator.Send(command, cancellationToken);
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "Device Not Found",
+                    Detail = ex.Message
+                });
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Validation Error",
+                    Detail = string.Join("; ", ex.Errors.Select(e => e.ErrorMessage))
+                });
+            }
         }
 
         /// <summary>
@@ -86,8 +125,29 @@ namespace DeviceManagementService.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateDevice([FromBody] UpdateDeviceCommand command, CancellationToken cancellationToken)
         {
-            await _mediator.Send(command, cancellationToken);
-            return NoContent();
+            try
+            {
+                await _mediator.Send(command, cancellationToken);
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "Device Not Found",
+                    Detail = ex.Message
+                });
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Validation Error",
+                    Detail = string.Join("; ", ex.Errors.Select(e => e.ErrorMessage))
+                });
+            }
         }
 
         /// <summary>
@@ -98,9 +158,21 @@ namespace DeviceManagementService.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteDevice([FromRoute] int id, CancellationToken cancellationToken)
         {
-            var command = new DeleteDeviceCommand(id);
-            await _mediator.Send(command, cancellationToken);
-            return NoContent();
+            try
+            {
+                var command = new DeleteDeviceCommand(id);
+                await _mediator.Send(command, cancellationToken);
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = "Device Not Found",
+                    Detail = ex.Message
+                });
+            }
         }
     }
 }

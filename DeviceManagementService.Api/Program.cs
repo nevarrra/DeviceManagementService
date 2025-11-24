@@ -1,3 +1,4 @@
+using DeviceManagementService.Api.Middleware;
 using DeviceManagementService.Application.Behaviors;
 using DeviceManagementService.Application.Commands;
 using DeviceManagementService.Application.Options;
@@ -44,10 +45,14 @@ namespace DeviceManagementService.Api
                 dbContext.Database.Migrate();
             }
 
-            if (app.Environment.IsDevelopment())
+            app.UseGlobalExceptionHandler();
+
+            app.MapOpenApi();
+            app.UseSwaggerUI(options =>
             {
-                app.MapOpenApi();
-            }
+                options.SwaggerEndpoint("/openapi/v1.json", "Device Management API");
+            });
+            
 
             app.UseHttpsRedirection();
 

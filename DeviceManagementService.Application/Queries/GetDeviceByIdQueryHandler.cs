@@ -1,11 +1,7 @@
 ﻿using DeviceManagementService.Application.DTOs;
+using DeviceManagementService.Domain.Exceptions;
 using DeviceManagementService.Infrastructure.Abstractions;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeviceManagementService.Application.Queries
 {
@@ -14,12 +10,10 @@ namespace DeviceManagementService.Application.Queries
         private readonly IDeviceRepository _repository = repository;
         public async Task<DeviceDTO?> Handle(GetDeviceByIdQuery request, CancellationToken cancellationToken)
         {
-            var device = await _repository.GetByIdAsync(request.Id, cancellationToken);
+            var device = await _repository.GetByIdAsync(request.Id, cancellationToken)
+                ?? throw new NotFoundException("Device", request.Id);
 
-            return device == null
-                ? throw new KeyNotFoundException($"Device with Id {request.Id} not found.")
-                : new DeviceDTO
-              (
+            return new DeviceDTO(
                 device.Id,
                 device.Name,
                 device.Brand,
@@ -27,6 +21,5 @@ namespace DeviceManagementService.Application.Queries
                 device.CreatedAt
             );
         }
-
     }
 }

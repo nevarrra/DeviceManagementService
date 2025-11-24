@@ -27,17 +27,15 @@ namespace DeviceManagementService.Infrastructure.Data
                 entity.Property(e => e.CreatedAt).IsRequired();
             });
 
-            // Seed data
-            var seedDevices = new List<Device>
-            {
-                new Device(1, "MacBook Pro 16", "Apple", DeviceState.Available),
-                new Device(2, "ThinkPad X1 Carbon", "Lenovo", DeviceState.InUse),
-                new Device(3, "Surface Laptop 5", "Microsoft", DeviceState.Available),
-                new Device(4, "WashPRO", "Siemens", DeviceState.Inactive),
-                new Device(5, "BestWifiFridge", "Samsung", DeviceState.Available)
-            };
-
-            modelBuilder.Entity<Device>().HasData(seedDevices);
+            // Seed data with fixed dates (required by EF Core)
+            var seedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            modelBuilder.Entity<Device>().HasData(
+                new { Id = 1, Name = "MacBook Pro 16", Brand = "Apple", State = DeviceState.Available, CreatedAt = seedDate },
+                new { Id = 2, Name = "ThinkPad X1 Carbon", Brand = "Lenovo", State = DeviceState.InUse, CreatedAt = seedDate },
+                new { Id = 3, Name = "Surface Laptop 5", Brand = "Microsoft", State = DeviceState.Available, CreatedAt = seedDate },
+                new { Id = 4, Name = "WashPRO", Brand = "Siemens", State = DeviceState.Inactive, CreatedAt = seedDate },
+                new { Id = 5, Name = "BestWifiFridge", Brand = "Samsung", State = DeviceState.Available, CreatedAt = seedDate }
+            );
         }
     }
 }
