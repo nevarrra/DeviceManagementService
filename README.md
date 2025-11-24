@@ -110,7 +110,7 @@ This project follows **Clean Architecture** with clear separation of concerns ac
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        API Layer                                │
-│   Controllers, Middleware, Program.cs                           │
+│   Controllers, Program.cs                           │
 ├─────────────────────────────────────────────────────────────────┤
 │                    Application Layer                            │
 │   Commands, Queries, Handlers, Validators, DTOs, Behaviors      │
@@ -319,6 +319,7 @@ When creating a new device, if the `state` field is not provided, it defaults to
   "createdAt": "2024-01-01T00:00:00Z"
 }
 ```
+It is only possible to change the state when no Name or Brand is provided - subject to business rule change. 
 
 ### 2. Devices In Use Cannot Be Modified
 
