@@ -105,6 +105,15 @@ namespace DeviceManagementService.Api.Controllers
                     Detail = ex.Message
                 });
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Invalid Operation",
+                    Detail = ex.Message
+                });
+            }
             catch (ValidationException ex)
             {
                 return BadRequest(new ProblemDetails
